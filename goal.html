@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #14532d, #166534, #15803d);
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .popup {
+            background-color: #166534;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            text-align: center;
+            max-width: 90%;
+        }
+        .popup h2 {
+            margin-top: 0;
+            color: #22c55e;
+        }
+        .popup p {
+            font-size: 16px;
+            margin: 15px 0;
+            color: #d1fae5;
+        }
+        .popup button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .popup button:hover {
+            background-color: #16a34a;
+        }
+        .card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            background-color: #166534;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            margin-top: 20px;
+            gap: 15px;
+        }
+        .card img {
+            width: 80px;
+            height: auto;
+            border-radius: 5px;
+            border: 2px solid #22c55e;
+        }
+        .cardinfo h5 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #22c55e;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(7, 60px);
+            grid-template-rows: repeat(4, 60px);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .grid-item {
+            width: 60px;
+            height: 60px;
+            background-color: #14532d;
+            border: 2px solid #22c55e;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, background-color 0.3s;
+        }
+        .grid-item.goal {
+            background-image: url('goal.png');
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.2);
+            box-shadow: 0 6px 12px rgba(34, 197, 94, 0.6);
+        }
+        #startBtn, .link-btn {
+            padding: 14px 30px;
+            font-size: 18px;
+            margin-top: 15px;
+            background-color: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        #startBtn:hover, .link-btn:hover {
+            background-color: #16a34a;
+            transform: scale(1.1);
+        }
+        .button-container {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        @media (max-width: 600px) {
+            .grid-container {
+                grid-template-columns: repeat(7, 40px);
+                grid-template-rows: repeat(4, 40px);
+                gap: 5px;
+            }
+            .grid-item {
+                width: 40px;
+                height: 40px;
+            }
+            .card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .card img {
+                width: 60px;
+            }
+            .cardinfo h5 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup">
+        <div class="popup">
+            <h2>⚠️ Important Rules</h2>
+            <p>1. Play responsibly and set a budget.<br>
+               2. Follow all community guidelines.<br>
+               3. No cheating or exploiting the system.<br>
+               4. Enjoy the game and have fun!</p>
+            <button onclick="closePopup()">OK</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="goallogo.png" alt="Game Image">
+        <div class="cardinfo">
+            <h5>⚽ Welcome to the Stylish Goal Game! Score and Win!</h5>
+        </div>
+    </div>
+
+    <div class="grid-container" id="gridContainer"></div>
+    <button id="startBtn">⚽ START PREDICTION</button>
+
+    <div class="button-container">
+        <button class="link-btn" onclick="window.open('https://www.team19.in/bestgame.html', '_blank')">🔥 BEST GAME LINK</button>
+        <button class="link-btn" onclick="window.open('https://www.team19.in/telegram.html', '_blank')">📢 TELEGRAM CHANNELS</button>
+    </div>
+
+    <script>
+        const gridContainer = document.getElementById('gridContainer');
+        const startBtn = document.getElementById('startBtn');
+        let isFirstPrediction = true;
+
+        // Close popup function
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Create grid items
+        function createGrid() {
+            gridContainer.innerHTML = '';
+            for (let i = 0; i < 28; i++) {
+                const gridItem = document.createElement('div');
+                gridItem.classList.add('grid-item');
+                gridContainer.appendChild(gridItem);
+            }
+        }
+
+        // Place random goals with animation
+        function placeGoals() {
+            for (let col = 0; col < 4; col++) {
+                const randomRow = Math.floor(Math.random() * 4);
+                const index = randomRow * 7 + col;
+                const goalItem = gridContainer.children[index];
+                
+                setTimeout(() => {
+                    goalItem.classList.add('goal');
+                }, col * 300);
+            }
+        }
+
+        // Handle prediction button
+        startBtn.addEventListener('click', () => {
+            createGrid();
+            placeGoals();
+
+            if (isFirstPrediction) {
+                startBtn.innerText = "🔁 NEXT PREDICTION";
+                isFirstPrediction = false;
+            }
+        });
+
+        // Initialize grid on page load
+        createGrid();
+    </script>
+</body>
+</html>

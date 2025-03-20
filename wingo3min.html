@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wingo 3 Min Prediction</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #2196F3, #6EC6FF);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            color: #1976D2;
+        }
+        input {
+            padding: 10px;
+            width: 80%;
+            border: 2px solid #1976D2;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            text-align: center;
+        }
+        button {
+            padding: 12px 20px;
+            background: #1976D2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background: #0D47A1;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #E3F2FD;
+            border-radius: 10px;
+            font-size: 18px;
+            color: #1976D2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🎯 Wingo 3 Min Prediction</h2>
+        <input type="text" id="periodNumber" placeholder="Enter Period Number">
+        <button onclick="generatePrediction()">Get Prediction</button>
+        <div id="predictionResult" class="result"></div>
+        <button onclick="nextPrediction()" style="margin-top: 10px;">Next Prediction</button>
+    </div>
+
+    <script>
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generatePrediction() {
+            let period = document.getElementById("periodNumber").value.trim();
+            if (!period || isNaN(period)) {
+                alert("⚠️ Please enter a valid Period Number!");
+                return;
+            }
+
+            let size = Math.random() < 0.5 ? "SMALL 🟡" : "BIG 🔵";
+            let numbers = size === "SMALL 🟡" 
+                ? [getRandomElement([5, 6, 7, 8, 9]), getRandomElement([5, 6, 7, 8, 9])]
+                : [getRandomElement([0, 1, 2, 3, 4]), getRandomElement([0, 1, 2, 3, 4])];
+
+            document.getElementById("predictionResult").innerHTML = 
+                `📌 <b>Period:</b> ${period} <br> ✅ <b>Size:</b> ${size} <br> 🔢 <b>Numbers:</b> ${numbers.join(", ")}`;
+        }
+
+        function nextPrediction() {
+            let currentPeriod = document.getElementById("periodNumber").value;
+            if (!currentPeriod || isNaN(currentPeriod)) {
+                alert("⚠️ Please enter a valid Period Number first!");
+                return;
+            }
+            document.getElementById("periodNumber").value = parseInt(currentPeriod) + 1;
+            generatePrediction();
+        }
+    </script>
+
+</body>
+</html>
